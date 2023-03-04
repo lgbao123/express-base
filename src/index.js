@@ -9,8 +9,10 @@ const port = process.env.PORT || 8000
 // config template 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, 'view'));
+//config static file 
+app.use(express.static(path.join(__dirname, 'public')))
 
-// setting route
+// route
 app.get('/', (req, res) => {
    res.render('index')
 })
@@ -18,3 +20,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
    console.log(`Example app listening on port :${port}`)
 })
+
+console.log(path.join(__dirname));
