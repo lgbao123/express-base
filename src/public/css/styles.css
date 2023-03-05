@@ -1,0 +1,10 @@
+.title {
+   font-size: 50px;
+   text-align: center;
+   width: 100%;
+}
+
+.navbar-nav .active {
+   font-weight: bold;
+   /* background-color: red; */
+}
