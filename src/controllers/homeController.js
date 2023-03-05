@@ -1,23 +1,26 @@
 
-const connection = require('../config/database')
-const getHomePage = (req, res) => {
-
-
-   res.render('index')
+// const connection = require('../config/database')
+const getHomePage = async (req, res) => {
+   return res.send('OK')
+   const [results, fields] = await connection.query(
+      'SELECT * FROM  Users u ')
+   res.render('index', { userList: results })
 }
-const test = (req, res) => {
-   let user = []
-   connection.query(
-      'SELECT * FROM  Users u ',
-      function (err, results, fields) {
-         // console.log(results); // results contains rows returned by server
-         user = results;
-         res.send(JSON.stringify(user));
-      }
-   )
-   return 'test'
+const getCreatePage = (req, res) => {
+   res.render('createUser')
+}
+const postCreateUser = async (req, res) => {
+
+   const { email, name, city } = req.body;
+   const [results, fields] = await connection.query(
+      ' INSERT INTO Users (email , name ,city)  VALUES (?,?,?)', [email, name, city]);
+
+   // const [userList] = await connection.query(
+   //    'SELECT * FROM  Users u ')
+   // res.render('index', { userList: userList })
+   res.redirect('/')
 }
 
 module.exports = {
-   getHomePage, test
+   getHomePage, getCreatePage, postCreateUser
 }

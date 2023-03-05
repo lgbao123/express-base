@@ -1,9 +1,10 @@
 
 const express = require('express')
 const router = express.Router()
-const { getHomePage, test } = require("../controllers/homeController")
+const { getHomePage, getCreatePage, postCreateUser } = require("../controllers/homeController")
 
 router.get('/', getHomePage);
-router.get('/test', test);
+// router.get('/create', getCreatePage);
+// router.post('/create-user', postCreateUser);
 
 module.exports = router;

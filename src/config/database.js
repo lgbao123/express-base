@@ -1,17 +1,19 @@
-const mysql = require('mysql2');
+// const { Sequelize } = require('sequelize');
+import Sequelize from 'sequelize'
 require('dotenv').config();
-// create the connection to database
-const connection = mysql.createPool({
-   host: process.env.DB_HOST,
-   user: process.env.DB_USER,
-   database: process.env.DB_NAME,
-   password: process.env.DB_PASSWORD,
-   port: process.env.DB_PORT,
-   waitForConnections: true,
-   connectionLimit: 10,
-   maxIdle: 10, // max idle connections, the default value is the same as `connectionLimit`
-   idleTimeout: 60000, // idle connections timeout, in milliseconds, the default value 60000
-   queueLimit: 0
-});
 
+
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+   host: process.env.DB_HOST,
+   port: process.env.DB_PORT,
+   dialect: 'mysql'
+});
+const connection = async () => {
+   try {
+      await sequelize.authenticate();
+      console.log('Connection has been established successfully.');
+   } catch (error) {
+      console.error('Unable to connect to the database:', error);
+   }
+}
 module.exports = connection;
