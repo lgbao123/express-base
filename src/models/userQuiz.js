@@ -14,9 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   UserQuiz.init({
-    userId: DataTypes.INTERGER,
-    quizId: DataTypes.INTERGER,
-    totalCorrect: DataTypes.INTERGER
+    userId: DataTypes.INTEGER,
+    quizId: DataTypes.INTEGER,
+    totalCorrect: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'UserQuiz',
