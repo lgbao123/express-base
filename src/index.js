@@ -1,10 +1,15 @@
-const express = require('express')
-const path = require('path')
+// const express = require('express')
+// const path = require('path')
 require('dotenv').config()
-const configViewEngine = require('./config/viewEngine')
-const webRouters = require('./routes/web')
-const connection = require('./config/database')
+// const configViewEngine = require('./config/viewEngine')
 
+// const connection = require('./config/database')
+// const initRoutes = require('./routes/index')
+
+import express from 'express'
+import configViewEngine from './config/viewEngine'
+import connection from './config/database'
+import initRoutes from './routes/index'
 const app = express()
 const port = process.env.PORT || 8000
 const hostname = process.env.HOST_NAME
@@ -19,7 +24,8 @@ app.use(express.urlencoded({ extended: true }));     // for application/x-www-fo
 
 
 // route
-app.use('/', webRouters);
+// app.use('/', webRouters);
+initRoutes(app)
 
 
 //connect database
