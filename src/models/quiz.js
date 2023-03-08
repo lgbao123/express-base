@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   Quiz.init({
     name: DataTypes.STRING,
     description: DataTypes.STRING,
-    image: DataTypes.STRING,
+    image: DataTypes.TEXT('long'),
     type: DataTypes.STRING,
 
   }, {

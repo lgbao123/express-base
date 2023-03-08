@@ -20,11 +20,14 @@ module.exports = {
         type: Sequelize.STRING
       },
       image: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT('long')
       },
       role: {
         type: Sequelize.STRING,
         defaultValue: 'USER'
+      },
+      rf_token: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

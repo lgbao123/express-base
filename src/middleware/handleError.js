@@ -6,7 +6,7 @@ const logError = (err, req, res) => {
    console.log('Body:', req.body);
    console.log('Query:', req.query);
    console.log('Error: ', err);
-   console.log('Error stack: ', err.stack);
+   console.log('Error stack: ', err?.stack);
    console.log("--------------------------------------------------------------------------------------");
 
 }
@@ -15,6 +15,15 @@ const badRequest = (res, mes) => {
    const error = {
       DT: '',
       EC: 1,
+      EM: err.message
+   }
+   return res.status(err.status).json(error);
+}
+const unAuth = (res, mes, isExpired = false) => {
+   const err = createError.Unauthorized(mes);
+   const error = {
+      DT: '',
+      EC: isExpired ? -999 : 1,
       EM: err.message
    }
    return res.status(err.status).json(error);
@@ -41,4 +50,4 @@ const notFound = (req, res) => {
 }
 
 
-export { badRequest, internalServerError, notFound, logError }
+export { badRequest, internalServerError, notFound, logError, unAuth }

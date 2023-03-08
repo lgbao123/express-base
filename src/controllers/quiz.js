@@ -4,15 +4,15 @@ import * as services from '../services'
 import db from '../models';
 import { checkIncludeString } from '../helper/utils';
 import Joi from 'joi';
-import { email, username, password, role, id, image } from '../helper/joiSchema'
+import { id, name, description, image, type, image_base64 } from '../helper/joiSchema'
 import { upload, uploadCloud } from '../middleware/uploadImage';
-export const getUsers = async (req, res) => {
+export const getQuiz = async (req, res) => {
    try {
       const { order } = req.query;
-      if (order && order.length > 1) if (!checkIncludeString(order[0], Object.keys(db.User.rawAttributes)) || !checkIncludeString(order[1], ['DESC', 'ASC'])) {
+      if (order && order.length > 1) if (!checkIncludeString(order[0], Object.keys(db.Quiz.rawAttributes)) || !checkIncludeString(order[1], ['DESC', 'ASC'])) {
          return badRequest(res, 'Order not valid')
       }
-      const response = await services.getUser(req.query);
+      const response = await services.getQuiz(req.query);
       return res.status(200).json(response)
    }
    catch (error) {
@@ -20,22 +20,23 @@ export const getUsers = async (req, res) => {
       return internalServerError(req, res)
    }
 }
-export const createUser = async (req, res) => {
+export const createQuiz = async (req, res) => {
    try {
-      // console.log(req.body);
-      // console.log(res.body)
-      // console.log(req.fileValidationError);
+
       let fileData = ''
-      const schema = Joi.object({ email, username, password })
+      const schema = Joi.object({ name, description, image, type })
+      //validate
       const { error } = schema.validate(req.body, { abortEarly: false })
       const errorMes = error?.details.map(detail => detail.message)
       if (errorMes && errorMes.length) return badRequest(res, errorMes)
       //check img file
       if (req.fileValidationError) return badRequest(res, 'Please upload file image')
       if (req.file) {
-         fileData = await uploadCloud(req)
+         // fileData = await uploadCloud(req)
+         req.body.image = req?.file?.buffer?.toString('base64')
       }
-      const response = await services.createUser(req.body, fileData);
+
+      const response = await services.createQuiz(req.body, fileData);
       return res.status(200).json(response)
    }
    catch (error) {
@@ -43,22 +44,23 @@ export const createUser = async (req, res) => {
       return internalServerError(req, res)
    }
 }
-export const updateUser = async (req, res) => {
+export const updateQuiz = async (req, res) => {
    try {
-      // console.log(res.body)
-      // console.log(req.fileValidationError);
-      let fileData = ''
-      const schema = Joi.object({ username, role, id, image })
-      const { error } = schema.validate(req.body, { abortEarly: false })
-      // console.log(req.body);
+      //validate
+      let fileData = '';
+      const { image, ...body } = req.body
+      const schema = Joi.object({ id, name, description, image_base64, type })
+      const { error } = schema.validate({ ...body, image_base64: image }
+         , { abortEarly: false })
+      //check img file
       const errorMes = error?.details.map(detail => detail.message)
       if (errorMes && errorMes.length) return badRequest(res, errorMes)
       // check img file
       if (req.fileValidationError) return badRequest(res, 'Please upload file image')
       if (req.file) {
-         fileData = await uploadCloud(req)
+         req.body.image = req?.file?.buffer?.toString('base64')
       }
-      const response = await services.updateUser(req.body, fileData);
+      const response = await services.updateQuiz(req.body);
       return res.status(200).json(response)
    }
    catch (error) {
@@ -67,15 +69,15 @@ export const updateUser = async (req, res) => {
    }
 }
 
-export const deleteUser = async (req, res) => {
+export const deleteQuiz = async (req, res) => {
    try {
 
       const schema = Joi.object({ id })
-      const { error } = schema.validate(req.body, { abortEarly: false })
+      const { error } = schema.validate(req.params, { abortEarly: false })
       // console.log(req.body);
       const errorMes = error?.details.map(detail => detail.message)
       if (errorMes && errorMes.length) return badRequest(res, errorMes)
-      const response = await services.deleteUser(req.body?.id);
+      const response = await services.deleteQuiz(req.params?.id);
       return res.status(200).json(response)
    }
    catch (error) {
