@@ -11,12 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Answer.belongsTo(models.Question, { foreignKey: 'questionId', onDelete: "cascade" })
+      Answer.belongsTo(models.Question, { foreignKey: 'questionId', onDelete: 'cascade' })
     }
   }
   Answer.init({
     description: DataTypes.STRING,
-    isCorrect: DataTypes.BOOLEAN,
+    isCorrect: DataTypes.STRING,
     questionId: DataTypes.INTEGER
   }, {
     sequelize,

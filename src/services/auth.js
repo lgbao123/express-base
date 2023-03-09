@@ -33,7 +33,7 @@ export const login = ({ email, password }) => new Promise(async (resolve, reject
       const checkPass = row && bcryptjs.compareSync(password, row.password)
       //create access token
       const accessToken = checkPass ? jwt.sign({
-         email: row.email, username: row.username, password: row.password
+         id: row.id, email: row.email, username: row.username, password: row.password
       }, process.env.JWT_SECRET, { expiresIn: '10d' }) : '';
 
       //create refresh token
@@ -112,7 +112,7 @@ export const refreshToken = ({ refresh_token, email }) => new Promise(async (res
       let accessToken = ''
       if (row) {
          accessToken = jwt.sign({
-            email: row.email, username: row.username, password: row.password
+            id: row.id, email: row.email, username: row.username, password: row.password
          }, process.env.JWT_SECRET, { expiresIn: '10d' });
       }
 

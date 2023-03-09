@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Quiz.hasMany(models.UserQuiz, { foreignKey: 'quizId', onDelete: "cascade" })
-      Quiz.hasMany(models.Question, { foreignKey: 'quizId', onDelete: "cascade" })
+      Quiz.hasMany(models.UserQuiz, { foreignKey: 'quizId', onDelete: "cascade", hooks: true, })
+      Quiz.hasMany(models.Question, { foreignKey: 'quizId', onDelete: "cascade", as: "qa", hooks: true, })
     }
   }
   Quiz.init({

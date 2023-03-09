@@ -39,6 +39,29 @@ export const getQuiz = ({ page, limit, order, name }) => new Promise(async (reso
       reject(error);
    }
 })
+export const getQuizById = (id) => new Promise(async (resolve, reject) => {
+   try {
+
+      const query = { id }
+      if (id === 'all') delete query.id
+      const rows = await db.Quiz.findAll({
+         attributes: { exclude: ['createdAt', 'updatedAt'] },
+         where: { ...query },
+         order: [['id', 'DESC']],
+
+         raw: true
+      })
+      console.log(rows);
+      resolve({
+         DT: rows ? rows : '',
+         EC: rows ? 0 : 1,
+         EM: rows ? "Success" : "Data not found"
+      })
+   } catch (error) {
+      reject(error);
+   }
+})
+
 
 export const createQuiz = (body) => new Promise(async (resolve, reject) => {
    try {

@@ -20,6 +20,7 @@ configViewEngine(app)
 app.use(bodyParser.json());
 // for parsing application/xwww-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
 // for parsing multipart/form-data
 // app.use(upload.array());
 
