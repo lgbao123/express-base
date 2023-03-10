@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
-import { cloudinary } from '../middleware/uploadImage';
 import db from '../models'
 import _ from 'lodash'
+import { array } from 'joi';
 require('dotenv').config()
 
 export const getQuizByUser = (id) => new Promise(async (resolve, reject) => {
@@ -57,7 +57,7 @@ export const assignQuizToUser = ({ quizId, userId }) => new Promise(async (resol
       reject(error);
    }
 })
-export const getQuizWithQA = (id) => new Promise(async (resolve, reject) => {
+export const getQuizWithQA = (id, raw = false) => new Promise(async (resolve, reject) => {
    try {
       // const query = { id }
 
@@ -91,12 +91,14 @@ export const getQuizWithQA = (id) => new Promise(async (resolve, reject) => {
                   const listAns = item.map(ans => ans.answers)
                   return { ...item[0], answers: listAns }
                })
+               .value()
 
             // console.log('check final', final);
             return { ...item[0], qa: final }
          })
          .value()
 
+      if (raw) return resolve(kq[0])
       resolve({
          DT: rows[0] ? kq[0] : '',
          EC: rows[0] ? 0 : 1,
@@ -111,7 +113,7 @@ export const getQuizWithQA = (id) => new Promise(async (resolve, reject) => {
 export const upSertQuizQA = (body) => new Promise(async (resolve, reject) => {
    try {
       // console.log(body);
-      let idQuesDB = await db.Question.findAll({ where: { quizId: body.quizId }, raw: true }) || []
+      let idQuesDB = await db.Question.findAll({ where: { quizId: +body.quizId }, raw: true }) || []
       idQuesDB = idQuesDB.map(item => item.id)
       // console.log(idQuesDB);
       // const indexQ = idQuesDB.findIndex(1)
@@ -139,7 +141,7 @@ export const upSertQuizQA = (body) => new Promise(async (resolve, reject) => {
                   queryA.id = +idA
                   idAnsDB.splice(indexA, 1)
                }
-               console.log('check query answer :', { ...queryA });
+               // console.log('check query answer :', { ...queryA });
                const [city, created] = await db.Answer.upsert({ ...queryA, questionId: ques.id })
             }
             // console.log('check Answer DB id :', idAnsDB);
@@ -177,32 +179,37 @@ export const upSertQuizQA = (body) => new Promise(async (resolve, reject) => {
 })
 
 
-// export const updateQuiz = ({ id, ...body }) => new Promise(async (resolve, reject) => {
-//    try {
-//       // console.log(body);
-//       const response = await db.Quiz.update({
-//          ...body,
-//       }, { where: { id } })
-//       // console.log(fileData);
-//       resolve({
-//          DT: '',
-//          EC: response[0] > 0 ? 0 : 1,
-//          EM: response[0] > 0 ? `Update ${response[0]} Quiz` : 'quizId not found'
-//       })
-//    } catch (error) {
-//       reject(error);
-//    }
-// })
-// export const deleteQuiz = (id) => new Promise(async (resolve, reject) => {
-//    try {
-//       const response = await db.Quiz.destroy({ where: { id: id } })
-//       resolve({
-//          DT: '',
-//          EC: response > 0 ? 0 : 1,
-//          EM: response > 0 ? `Delete ${response} quiz` : 'quizId not found'
-//       })
-//    } catch (error) {
+export const submitQuiz = (body, userId) => new Promise(async (resolve, reject) => {
+   try {
+      const quiz = await getQuizWithQA(body.quizId, true)
+      let totalCorrect = 0
+      let totalQuestion = 0
+      if (quiz) totalQuestion = quiz?.qa?.length
+      quiz && body.answers.forEach((question) => {
+         // console.log(test);
+         const quesDB = quiz.qa.find(item => item.id === +question.questionId)
+         let ansDB = quesDB.answers.filter(answer => answer.isCorrect == true)
+         ansDB = ansDB.map(ans => ans.id)
+         question.dbAnswerId = ansDB || []
+         if (question.userAnswerId.length === question.dbAnswerId.length) {
 
-//       reject(error);
-//    }
-// })
+            // console.log(question.userAnswerId);
+            // console.log(question.dbAnswerId);
+            const correctFilter = question.userAnswerId.filter(e => ansDB.indexOf(e) !== -1);
+            // console.log(correctFilter);
+            if (correctFilter.length === question.userAnswerId.length) totalCorrect = totalCorrect + 1
+         }
+      })
+      resolve({
+         DT: totalQuestion > 0 ? { "countCorrect": totalCorrect, "countTotal": totalQuestion } : '',
+         EC: totalQuestion > 0 ? 0 : 1,
+         EM: totalQuestion > 0 ? `Success` : 'Question not found in quiz'
+      })
+
+      db.History.create({ quizId: body?.quizId, userId, totalCorrect, totalQuestion })
+
+   } catch (error) {
+
+      reject(error);
+   }
+})

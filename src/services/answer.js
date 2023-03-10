@@ -19,7 +19,7 @@ export const createAnswer = ({ correct_answer, ...body }) => new Promise(async (
       }
       const row = await db.Answer.create({
          ...body,
-         isCorrect: correct_answer
+         isCorrect: correct_answer.toLowerCase() === 'true'
       })
       resolve({
          DT: row ? row : '',
@@ -37,7 +37,7 @@ export const updateAnswer = ({ id, correct_answer, ...body }) => new Promise(asy
    try {
 
       const response = await db.Answer.update({
-         ...body, isCorrect: correct_answer
+         ...body, isCorrect: correct_answer.toLowerCase() === 'true'
       }, { where: { id } })
       // console.log(fileData);
       resolve({

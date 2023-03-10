@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('UserQuiz', {
+    await queryInterface.createTable('History', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -17,6 +17,14 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false
       },
+      totalCorrect: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      totalQuestion: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -30,6 +38,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('UserQuiz');
+    await queryInterface.dropTable('History');
   }
 };

@@ -27,9 +27,8 @@ export const updateAnswer = async (req, res) => {
    try {
 
       //validate
-      const { image, ...body } = req.body
       const schema = Joi.object({ id, questionId, description, correct_answer })
-      const { error } = schema.validate({ ...body }
+      const { error } = schema.validate(req.body
          , { abortEarly: false })
       //check img file
       const errorMes = error?.details.map(detail => detail.message)

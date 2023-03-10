@@ -4,7 +4,7 @@ import * as services from '../services'
 import db from '../models';
 import { checkIncludeString } from '../helper/utils';
 import Joi from 'joi';
-import { id, name, description, image, type, image_base64 } from '../helper/joiSchema'
+import { id, name, description, image, type, image_base64, time } from '../helper/joiSchema'
 import { upload, uploadCloud } from '../middleware/uploadImage';
 export const getQuiz = async (req, res) => {
    try {
@@ -40,7 +40,7 @@ export const createQuiz = async (req, res) => {
    try {
 
       let fileData = ''
-      const schema = Joi.object({ name, description, image, type })
+      const schema = Joi.object({ name, description, image, type, time })
       //validate
       const { error } = schema.validate(req.body, { abortEarly: false })
       const errorMes = error?.details.map(detail => detail.message)
@@ -65,7 +65,7 @@ export const updateQuiz = async (req, res) => {
       //validate
       let fileData = '';
       const { image, ...body } = req.body
-      const schema = Joi.object({ id, name, description, image_base64, type })
+      const schema = Joi.object({ id, name, description, image_base64, type, time })
       const { error } = schema.validate({ ...body, image_base64: image }
          , { abortEarly: false })
       //check img file

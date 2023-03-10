@@ -22,6 +22,10 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: 'EASY'
       },
+      time: {
+        type: Sequelize.INTEGER,
+        defaultValue: 90
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

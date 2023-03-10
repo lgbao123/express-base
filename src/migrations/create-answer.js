@@ -13,7 +13,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       isCorrect: {
-        type: Sequelize.STRING
+        type: Sequelize.BOOLEAN
       },
       questionId: {
         type: Sequelize.INTEGER,
