@@ -4,7 +4,7 @@ import * as services from '../services'
 import db from '../models';
 import { checkIncludeString } from '../helper/utils';
 import Joi from 'joi';
-import { email, username, password, role, id, image } from '../helper/joiSchema'
+import { email, username, password, role, id, image, current_password, new_password } from '../helper/joiSchema'
 import { upload, uploadCloud } from '../middleware/uploadImage';
 export const getUsers = async (req, res) => {
    try {
@@ -76,6 +76,47 @@ export const deleteUser = async (req, res) => {
       const errorMes = error?.details.map(detail => detail.message)
       if (errorMes && errorMes.length) return badRequest(res, errorMes)
       const response = await services.deleteUser(req.body?.id);
+      return res.status(200).json(response)
+   }
+   catch (error) {
+      logError(error, req, res)
+      return internalServerError(req, res)
+   }
+}
+
+export const changePassword = async (req, res) => {
+   try {
+
+      const schema = Joi.object({ new_password, current_password })
+      const { error } = schema.validate(req.body, { abortEarly: false })
+      // console.log(req.body);
+      const errorMes = error?.details.map(detail => detail.message)
+      if (errorMes && errorMes.length) return badRequest(res, errorMes)
+
+      if (req?.body?.new_password == req?.body?.current_password) return badRequest(res, `new password is not same password `)
+      const response = await services.changePassword(req?.body?.current_password, req?.body?.new_password, req?.user?.id);
+      return res.status(200).json(response)
+   }
+   catch (error) {
+      logError(error, req, res)
+      return internalServerError(req, res)
+   }
+}
+export const getHistory = async (req, res) => {
+   try {
+
+      const response = await services.getHistory(req?.user?.id);
+      return res.status(200).json(response)
+   }
+   catch (error) {
+      logError(error, req, res)
+      return internalServerError(req, res)
+   }
+}
+
+export const getDashboard = async (req, res) => {
+   try {
+      const response = await services.getDashboard(req?.user?.id);
       return res.status(200).json(response)
    }
    catch (error) {

@@ -98,11 +98,12 @@ export const updateQuiz = ({ id, ...body }) => new Promise(async (resolve, rejec
 })
 export const deleteQuiz = (id) => new Promise(async (resolve, reject) => {
    try {
-      const response = await db.Quiz.destroy({ where: { id: id } })
+      const quiz = await db.Quiz.findOne({ where: { id: id } })
+      if (quiz) quiz.destroy()
       resolve({
          DT: '',
-         EC: response > 0 ? 0 : 1,
-         EM: response > 0 ? `Delete ${response} quiz` : 'quizId not found'
+         EC: quiz ? 0 : 1,
+         EM: quiz ? `Delete quiz success` : 'quizId not found'
       })
    } catch (error) {
 

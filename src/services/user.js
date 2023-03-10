@@ -1,9 +1,9 @@
 import { Op } from 'sequelize';
 import { getPublicId, hashPassword } from '../helper/utils';
 import { cloudinary } from '../middleware/uploadImage';
-
+import bcryptjs from 'bcryptjs'
 import db from '../models'
-
+import sequelize from 'sequelize'
 require('dotenv').config()
 
 export const getUser = ({ page: pageU, limit: limitU, order: orderU, username: usernameU }) => new Promise(async (resolve, reject) => {
@@ -93,15 +93,103 @@ export const updateUser = ({ id, ...body }, fileData) => new Promise(async (reso
 })
 export const deleteUser = (id) => new Promise(async (resolve, reject) => {
    try {
-      console.log(id);
       const user = await db.User.findOne({ where: { id: id } })
       if (user && user.image) cloudinary.v2.uploader.destroy(getPublicId(user.image))
-      const response = await db.User.destroy({ where: { id: id } })
-      console.log(response);
+      if (user) user.destroy()
+      // const response = await db.User.destroy({ where: { id: id } })
       resolve({
          DT: '',
-         EC: response > 0 ? 0 : 1,
-         EM: response > 0 ? `Delete ${response} user` : 'userid not found'
+         EC: user ? 0 : 1,
+         EM: user ? `Delete user success` : 'userid not found'
+      })
+   } catch (error) {
+
+      reject(error);
+   }
+})
+export const changePassword = (currentPass, newPass, id) => new Promise(async (resolve, reject) => {
+   try {
+      const user = await db.User.findOne({ where: { id: id } })
+      const checkPass = user && bcryptjs.compareSync(currentPass, user.password)
+      if (checkPass) user.update({ password: hashPassword(newPass) })
+      // const response = await db.User.destroy({ where: { id: id } })
+      resolve({
+         DT: '',
+         EC: checkPass ? 0 : 1,
+         EM: checkPass ? `Update password success` : 'Password incorrect'
+      })
+   } catch (error) {
+
+      reject(error);
+   }
+})
+
+export const getHistory = (id) => new Promise(async (resolve, reject) => {
+   try {
+
+      const history = await db.User.findAll({
+         where: { id: id },
+         attributes: ['id', 'username', 'email'],
+         include: [
+            {
+               model: db.History,
+               required: true,
+               attributes: ['totalCorrect', 'totalQuestion', 'createdAt'],
+               include: {
+                  model: db.Quiz, required: true,
+                  attributes: ['name', 'description'],
+               }
+            },
+
+         ],
+         // raw: true
+      })
+      // const response = await db.User.destroy({ where: { id: id } })
+      resolve({
+         DT: history ? history : '',
+         EC: history ? 0 : 1,
+         EM: history ? `success` : 'userid not found'
+      })
+   } catch (error) {
+
+      reject(error);
+   }
+})
+
+export const getDashboard = (id) => new Promise(async (resolve, reject) => {
+   try {
+      // const countUser = db.User.count();
+      const countQuiz = await db.Quiz.count();
+      const countQuestion = await db.Question.count();
+      const countAnswer = await db.Answer.count();
+      const countUser = await db.User.findAll({
+         attributes: [
+            "role",
+            [sequelize.fn("COUNT", sequelize.col("role")), "total"],
+         ],
+         group: "role",
+         raw: true
+      }) || []
+      const roleUser = countUser.find(item => item.role === 'USER')
+      const roleAdmin = countUser.find(item => item.role === 'ADMIN')
+      const result = {
+         users: {
+            total: (+roleAdmin?.total + +roleUser?.total) || 0,
+            countUsers: +roleUser.total || 0,
+            countAdmin: +roleAdmin.total || 0,
+
+         },
+         others: {
+            countQuiz: countQuiz || 0,
+            countQuestions: countQuestion || 0,
+            countAnswers: countAnswer || 0,
+         }
+      }
+
+      resolve({
+         DT: result,
+         EC: 0,
+         EM: result ? `success` : ' not found'
       })
    } catch (error) {
 
