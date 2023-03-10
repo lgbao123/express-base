@@ -129,7 +129,6 @@ export const refreshToken = ({ refresh_token, email }) => new Promise(async (res
 export const logOut = ({ refresh_token, email }) => new Promise(async (resolve, reject) => {
    try {
       const response = await db.User.update({ rf_token: null }, { where: { rf_token: refresh_token, email } })
-      console.log(response);
       resolve({
          DT: "",
          EC: response[0] > 0 ? 0 : 1,

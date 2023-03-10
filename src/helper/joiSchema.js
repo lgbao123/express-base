@@ -13,7 +13,7 @@ export const new_password =
    });
 export const email = Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required();
 export const role = Joi.string().valid("ADMIN", "USER")
-export const id = Joi.string().required();
+export const id = Joi.alternatives().try(Joi.number(), Joi.string()).required();
 export const userId = Joi.number().required();
 export const quizId = Joi.number().required();
 export const questionId = Joi.number().required();

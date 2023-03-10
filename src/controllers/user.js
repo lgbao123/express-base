@@ -26,7 +26,7 @@ export const createUser = async (req, res) => {
       // console.log(res.body)
       // console.log(req.fileValidationError);
       let fileData = ''
-      const schema = Joi.object({ email, username, password })
+      const schema = Joi.object({ email, username, role, password, image })
       const { error } = schema.validate(req.body, { abortEarly: false })
       const errorMes = error?.details.map(detail => detail.message)
       if (errorMes && errorMes.length) return badRequest(res, errorMes)
