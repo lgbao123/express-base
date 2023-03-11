@@ -17,9 +17,10 @@ export const createAnswer = ({ correct_answer, ...body }) => new Promise(async (
             EM: "Question not in DB"
          })
       }
+      if (typeof correct_answer === 'string') correct_answer.toLowerCase() === 'true'
       const row = await db.Answer.create({
          ...body,
-         isCorrect: correct_answer.toLowerCase() === 'true'
+         isCorrect: correct_answer
       })
       resolve({
          DT: row ? row : '',

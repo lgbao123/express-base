@@ -23,10 +23,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 // middleware- config req.body
 // for parsing application/json
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
 // for parsing application/xwww-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '50mb' }));
 // for parsing multipart/form-data
 // app.use(upload.array());
 

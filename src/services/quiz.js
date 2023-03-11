@@ -51,7 +51,7 @@ export const getQuizById = (id) => new Promise(async (resolve, reject) => {
 
          raw: true
       })
-      console.log(rows);
+
       resolve({
          DT: rows ? rows : '',
          EC: rows ? 0 : 1,

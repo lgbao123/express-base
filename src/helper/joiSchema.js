@@ -42,12 +42,12 @@ export const upsertFormat = Joi.object().keys({
    quizId: Joi.number().required(),
    questions: Joi.array().items(
       Joi.object().keys({
-         id: Joi.string().required(),
+         id: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
          description: Joi.string(),
-         imageFile: Joi.string(),
+         imageFile: Joi.string().allow('', null),
          answers: Joi.array().items(
             Joi.object().keys({
-               id: Joi.string().required(),
+               id: Joi.alternatives().try(Joi.number(), Joi.string()).required(),
                description: Joi.string(),
                isCorrect: Joi.boolean()
             })

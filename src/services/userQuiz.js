@@ -33,8 +33,8 @@ export const assignQuizToUser = ({ quizId, userId }) => new Promise(async (resol
       // const query = { id }
       const countUser = await db.User.count({ where: { id: userId } })
       const countQuiz = await db.Quiz.count({ where: { id: quizId } })
-      console.log(countQuiz);
-      console.log(countUser);
+      // console.log(countQuiz);
+      // console.log(countUser);
       if (!countQuiz || !countUser) {
          return resolve({
             DT: '',
@@ -100,8 +100,8 @@ export const getQuizWithQA = (id, raw = false) => new Promise(async (resolve, re
 
       if (raw) return resolve(kq[0])
       resolve({
-         DT: rows[0] ? kq[0] : '',
-         EC: rows[0] ? 0 : 1,
+         DT: rows[0] ? kq[0] : { quizId: id, qa: [] },
+         EC: 0,
          EM: rows[0] ? "Success" : "Data not found"
       })
    } catch (error) {
@@ -169,7 +169,7 @@ export const upSertQuizQA = (body) => new Promise(async (resolve, reject) => {
       // })
       resolve({
          DT: '',
-         EC: 1,
+         EC: 0,
          EM: "Create quiz success"
       })
 

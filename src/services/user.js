@@ -27,7 +27,7 @@ export const getUser = ({ page: pageU, limit: limitU, order: orderU, username: u
          raw: true
       })
       totalRows = count
-      console.log(count);
+      // console.log(count);
       totalPages = Math.ceil(totalRows / limit) || 0
       // console.log('>>>> Query :', query);
       // console.log('>>>> queries :', queries);
