@@ -14,7 +14,7 @@ module.exports = {
       {
         username: 'Admin1',
         email: 'admin1@gmail.com',
-        password: hashPassword('123456789'),
+        password: hashPassword('Bao123456789'),
         role: "ADMIN",
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -22,21 +22,21 @@ module.exports = {
       {
         username: 'Admin2',
         email: 'admin2@gmail.com',
-        password: hashPassword('123456789'),
+        password: hashPassword('Bao123456789'),
         role: "ADMIN",
         createdAt: new Date(),
         updatedAt: new Date(),
       }, {
         username: 'user1',
         email: 'user1@gmail.com',
-        password: hashPassword('123456789'),
+        password: hashPassword('Bao123456789'),
         role: "USER",
         createdAt: new Date(),
         updatedAt: new Date(),
       }, {
         username: 'user2',
         email: 'user2@gmail.com',
-        password: hashPassword('123456789'),
+        password: hashPassword('Bao123456789'),
         role: "USER",
         createdAt: new Date(),
         updatedAt: new Date(),
